@@ -159,9 +159,10 @@ wpl = LocationGlobalRelative(50.443326, 30.448078, 100)
 fly_to_wpl(wpl)
 
 condition_yaw(350)
+time.sleep(30)
 
 print("Setting LAND mode...")
-vehicle.mode = VehicleMode("LAND")
+vehicle.mode = VehicleMode("RTL")
 time.sleep(1)
 
 # Close vehicle object before exiting script
