@@ -17,6 +17,7 @@ from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelativ
 from pymavlink import mavutil  # Needed for command message definitions
 import time
 import math
+import geopy.distance
 
 import threading
 
@@ -57,7 +58,7 @@ def arm_and_takeoff_nogps(aTargetAltitude):
 
     print("Arming motors")
     # Copter should arm in GUIDED_NOGPS mode
-    vehicle.mode = VehicleMode("GUIDED_NOGPS")
+    vehicle.mode = VehicleMode("GUIDED")
     vehicle.armed = True
 
     while not vehicle.armed:
@@ -72,14 +73,14 @@ def arm_and_takeoff_nogps(aTargetAltitude):
         current_altitude = vehicle.location.global_relative_frame.alt
         print(" Altitude: %f  Desired: %f" %
               (current_altitude, aTargetAltitude))
-        if current_altitude >= aTargetAltitude * 0.8:  # Trigger just below target alt.
+        if current_altitude >= aTargetAltitude - 0.01:  # Trigger just below target alt.
             print("Reached target altitude")
             current_thrust = 0.5
             break
         elif current_altitude >= aTargetAltitude * 0.6:
             current_thrust = SMOOTH_TAKEOFF_THRUST
         set_attitude()
-        time.sleep(0.2)
+        time.sleep(1)
 
 
 def send_attitude_target(roll_angle=0.0, pitch_angle=0.0,
@@ -188,10 +189,46 @@ def altitude_holder(target_altitude):
         time.sleep(0.1)
 
 
+def condition_yaw(heading, relative=False):
+    if relative:
+        is_relative=1 #yaw relative to direction of travel
+    else:
+        is_relative=0 #yaw is an absolute angle
+    # create the CONDITION_YAW command using command_long_encode()
+    msg = vehicle.message_factory.command_long_encode(
+        0, 0,    # target system, target component
+        mavutil.mavlink.MAV_CMD_CONDITION_YAW, #command
+        0, #confirmation
+        heading,    # param 1, yaw in degrees
+        0,          # param 2, yaw speed deg/s
+        1,          # param 3, direction -1 ccw, 1 cw
+        is_relative, # param 4, relative offset 1, absolute angle 0
+        0, 0, 0)    # param 5 ~ 7 not used
+    # send command to vehicle
+    vehicle.send_mavlink(msg)
+
+
 def fly_to_wpl(wpl):
     # -- Go to wpl
     print("go to wpl")
     vehicle.simple_goto(wpl, groundspeed=30)
+
+    position = vehicle.location.global_relative_frame
+    while True:
+
+        new_point = vehicle.location.global_relative_frame
+        left = geopy.distance.geodesic([wpl.lat, wpl.lon], [position.lat, position.lon])
+
+        print(new_point, vehicle.mode,
+              f"Left: {left.m} m")
+        if left.m < 0.2:
+            condition_yaw(350)
+            # vehicle.mode = VehicleMode("STABILIZE")
+            break
+        if vehicle.mode.name != "GUIDED":
+            vehicle.mode = vehicle.mode = VehicleMode("GUIDED")
+        time.sleep(1)
+
 
 
 
