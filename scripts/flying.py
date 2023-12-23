@@ -73,35 +73,6 @@ def arm_and_takeoff(tgt_altitude):
         time.sleep(1)
 
 
-def altitude_holder(target_altitude):
-    ACCEPTABLE_ALTITUDE_ERROR = 0.15
-    global current_thrust
-
-    print("Altitdude holer started")
-    while (vehicle.mode != "LAND"):
-        current_altitude = vehicle.location.global_relative_frame.alt
-        print(" Altitude: %f Target Altitude: %f " % (current_altitude, target_altitude))
-        print(" Attitude: %s" % vehicle.attitude)
-
-        # print " Velocity: %s" % vehicle.velocity
-        # print " Groundspeed: %s" % vehicle.groundspeed    # settable
-
-        if (current_altitude < target_altitude - ACCEPTABLE_ALTITUDE_ERROR):
-            current_thrust += 0.01
-            current_thrust = 0.65 if current_thrust > 0.65 else current_thrust
-            print("THRUST UP")
-        elif (current_altitude > target_altitude + ACCEPTABLE_ALTITUDE_ERROR):
-            current_thrust -= 0.01
-            current_thrust = 0.35 if current_thrust < 0.35 else current_thrust
-            print("THRUST DOWN")
-        else:
-            current_thrust = 0.5
-            print("THRUST HOLD")
-
-        # set_thrust(current_thrust)
-        time.sleep(0.1)
-
-
 def condition_yaw(heading, relative=False):
     if relative:
         is_relative=1 #yaw relative to direction of travel
@@ -149,10 +120,6 @@ def fly_to_wpl(wpl):
 TARGET_ALTITUDE = 100
 
 arm_and_takeoff(TARGET_ALTITUDE)
-
-t = threading.Thread(target=altitude_holder, args=(TARGET_ALTITUDE,))
-t.daemon = True
-t.start()
 
 wpl = LocationGlobalRelative(50.443326, 30.448078, 100)
 
