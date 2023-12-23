@@ -1,5 +1,3 @@
-#!/usr/bin/env python2.7
-
 """
 
 set_attitude_target.py: (Copter Only)
