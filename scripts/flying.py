@@ -1,28 +1,7 @@
-"""
-
-set_attitude_target.py: (Copter Only)
-
-This example shows how to move/direct Copter and send commands
- in GUIDED_NOGPS mode using DroneKit Python.
-
-Caution: A lot of unexpected behaviors may occur in GUIDED_NOGPS mode.
-        Always watch the drone movement, and make sure that you are in dangerless environment.
-        Land the drone as soon as possible when it shows any unexpected behavior.
-
-Tested in Python 2.7.10
-
-"""
-
 from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative
-from pymavlink import mavutil  # Needed for command message definitions
+from pymavlink import mavutil
 import time
-import math
 import geopy.distance
-
-import threading
-
-# Set up option parsing to get connection string
-import argparse
 
 
 sitl = None
