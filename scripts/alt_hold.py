@@ -9,5 +9,6 @@ vehicle = connect('udp:127.0.0.1:14550', baud=57600)
 
 # Get all original channel values (before override)
 while True:
+    vehicle.channels.overrides['2'] = 200
     print("Channel values from RC Tx:", vehicle.channels, vehicle.mode, vehicle.location.global_relative_frame)
     time.sleep(1)
