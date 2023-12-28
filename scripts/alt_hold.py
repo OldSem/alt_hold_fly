@@ -5,7 +5,7 @@ connection_string = 'udp:127.0.0.1:14550'
 
 print('Connecting to vehicle on: %s' % connection_string)
 vehicle = connect('udp:127.0.0.1:14550', baud=57600)
-vehicle.mode = VehicleMode("ALT HOLD")
+
 
 # Get all original channel values (before override)
 while True:
