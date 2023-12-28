@@ -42,7 +42,7 @@ def arm_and_takeoff(tgt_altitude):
             vehicle.armed = True
             time.sleep(1)
         altitude = vehicle.location.global_relative_frame.alt
-        print(vehicle.location.global_relative_frame, vehicle.mode)
+        print(vehicle.location.global_relative_frame, vehicle.mode, vehicle.channels)
         if altitude >= tgt_altitude - 1:
 
             print("Altitude reached")
@@ -82,7 +82,7 @@ def fly_to_wpl(wpl):
         left = geopy.distance.geodesic([wpl.lat, wpl.lon], [position.lat, position.lon])
 
         print(position, vehicle.mode,
-              f"Left: {left.m} m")
+              f"Left: {left.m} m", vehicle.channels)
         if left.m < 0.2:
 
             # vehicle.mode = VehicleMode("STABILIZE")
