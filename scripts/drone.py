@@ -15,13 +15,13 @@ class Action:
         return self.default + self.delta
 
     def correct(self):
-        self.delta = -(self.delta/abs(self.delta if self.delta != 0 else 1) * 10)
+        self.delta = int(-(self.delta/abs(self.delta if self.delta != 0 else 1) * 10))
 
     def faster(self):
-        self.delta = self.delta/abs(self.delta if self.delta != 0 else 1) * (abs(self.delta + 10))
+        self.delta = int(self.delta/abs(self.delta if self.delta != 0 else 1) * (abs(self.delta + 10)))
 
     def slower(self):
-        self.delta = self.delta/abs(self.delta if self.delta != 0 else 1) * (abs(self.delta - 10))
+        self.delta = int(self.delta/abs(self.delta if self.delta != 0 else 1) * (abs(self.delta - 10)))
 
 
 class Drone:
