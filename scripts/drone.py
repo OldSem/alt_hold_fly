@@ -74,7 +74,7 @@ class Drone:
         self.turn_off(10)
         self.wpl = LocationGlobalRelative(*wpl)
         print(self.left, self.left < 0.2)
-        while self.left < 0.2:
+        while self.left > 0.2:
             self.set_direction(self.roll)
             self.set_direction(self.pitch)
 
