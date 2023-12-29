@@ -4,21 +4,24 @@ import geopy.distance
 
 
 class Action:
-    delta = 10
+    delta = 0
 
     def __init__(self, channel, value):
         self.channel = channel
-        self.value = value
+        self.default = value
+
+    @property
+    def value(self):
+        return self.default + self.delta
 
     def correct(self):
-        self.delta = -self.delta
-        self.value += self.delta * 2
+        self.delta = -(self.delta/abs(self.delta) * 10)
 
     def faster(self):
-        self.value += self.delta
+        self.delta = self.delta/abs(self.delta) * (abs(self.delta + 10))
 
     def slower(self):
-        self.value -= self.delta
+        self.delta = self.delta/abs(self.delta) * (abs(self.delta - 10))
 
 
 class Drone:
@@ -63,7 +66,7 @@ class Drone:
         self.last_delta = self.delta
         action.faster()
         self.push_channels()
-        time.sleep(0.5)
+        time.sleep(1)
         print(self.left, self.last_distance, self.delta, self.last_delta)
         if self.left > self.last_distance or abs(self.delta) < abs(self.last_delta):
             action.correct()
@@ -85,11 +88,11 @@ class Drone:
 
     def turn_off(self, alt):
         while True:
-            self.throttle.value = 1900
+            self.throttle.delta = 400
             self.push_channels()
             time.sleep(1)
             if self.position.alt >= alt:
-                self.throttle.value = 1500
+                self.throttle.delta = 0
                 self.push_channels()
                 break
 
