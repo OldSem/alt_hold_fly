@@ -75,8 +75,8 @@ class Drone:
         print(self.left, self.last_distance, self.delta, self.last_delta)
         if self.left > self.last_distance or self.delta < self.last_delta:
             action.correct()
-        self.last_distance = self.left
-        self.last_delta = self.delta
+            self.push_channels()
+            time.sleep(1)
 
     def dummy_goto(self, wpl):
         while not self.vehicle.armed:
