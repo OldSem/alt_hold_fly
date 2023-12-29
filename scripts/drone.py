@@ -60,11 +60,11 @@ class Drone:
 
     def set_direction(self, action):
         self.last_distance = self.left
-        print(self.left)
         self.last_delta = self.delta
         action.faster()
         self.push_channels()
         time.sleep(0.5)
+        print(self.left, self.last_distance, self.delta, self.last_delta)
         if self.left > self.last_distance or self.delta < self.last_delta:
             action.correct()
         self.last_distance = self.left
