@@ -16,7 +16,9 @@ class Action:
         return self.default + self.delta
 
     def correct(self):
+        print("correct ", self.delta)
         self.delta = int(-(self.delta/abs(self.delta) * self.delta_grad)) if self.delta != 0 else 0
+        print("corrected ", self.delta)
 
     def faster(self):
         self.delta = int(self.delta/abs(self.delta) * (abs(self.delta + self.delta_grad))
@@ -69,12 +71,12 @@ class Drone:
         self.last_delta = self.delta
         action.faster()
         self.push_channels()
-        time.sleep(2)
+        time.sleep(5)
         print(self.left, self.last_distance, self.delta, self.last_delta)
         if self.left > self.last_distance or self.delta < self.last_delta:
             action.correct()
         self.last_distance = self.left
-        self.last_delta = self.last_delta
+        self.last_delta = self.delta
 
     def dummy_goto(self, wpl):
         while not self.vehicle.armed:
