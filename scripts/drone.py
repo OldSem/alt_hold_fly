@@ -5,6 +5,7 @@ import geopy.distance
 
 class Action:
     delta = 0
+    delta_grad = 100
 
     def __init__(self, channel, value=1500):
         self.channel = channel
@@ -15,13 +16,15 @@ class Action:
         return self.default + self.delta
 
     def correct(self):
-        self.delta = int(-(self.delta/abs(self.delta) * 10)) if self.delta != 0 else 0
+        self.delta = int(-(self.delta/abs(self.delta) * self.delta_grad)) if self.delta != 0 else 0
 
     def faster(self):
-        self.delta = int(self.delta/abs(self.delta) * (abs(self.delta + 10))) if self.delta != 0 else 10
+        self.delta = int(self.delta/abs(self.delta) * (abs(self.delta + self.delta_grad))
+                         ) if self.delta != 0 else self.delta_grad
 
     def slower(self):
-        self.delta = int(self.delta/abs(self.delta) * (abs(self.delta - 10))) if self.delta != 0 else -10
+        self.delta = int(self.delta/abs(self.delta) * (abs(self.delta - self.delta_grad))
+                         ) if self.delta != 0 else -self.delta_grad
 
 
 class Drone:
