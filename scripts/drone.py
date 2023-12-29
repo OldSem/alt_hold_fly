@@ -54,11 +54,15 @@ class Drone:
     def channels(self):
         return {action.channel: action.value for action in [self.roll, self.pitch, self.throttle, self.yaw]}
 
+    def push_channels(self):
+        self.vehicle.channels.overrides = self.channels
+
     def set_direction(self, action):
         self.last_distance = self.left
         print(self.left)
         self.last_delta = self.delta
         action.faster()
+        self.push_channels()
         time.sleep(0.5)
         if self.left > self.last_distance or self.delta < self.last_delta:
             action.correct()
@@ -81,10 +85,10 @@ class Drone:
     def turn_off(self, alt):
         while True:
             self.throttle.value = 1900
-            self.vehicle.channels.overrides = self.channels
+            self.push_channels()
             time.sleep(1)
             if self.position.alt >= alt:
                 self.throttle.value = 1500
-                self.vehicle.channels.overrides = self.channels
+                self.push_channels()
                 break
 
