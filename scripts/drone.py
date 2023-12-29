@@ -66,7 +66,11 @@ class Drone:
         self.last_delta = self.last_delta
 
     def dummy_goto(self, wpl):
-
+        while not self.vehicle.armed:
+            print(" Waiting for arming...")
+            self.vehicle.armed = True
+            time.sleep(1)
+        self.vehicle.mode = VehicleMode("ALT_HOLD")
         self.turn_off(10)
         self.wpl = LocationGlobalRelative(*wpl)
         while self.left < 0.2:
