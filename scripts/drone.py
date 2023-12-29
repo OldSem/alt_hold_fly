@@ -66,8 +66,8 @@ class Drone:
         self.last_delta = self.delta
         action.faster()
         self.push_channels()
+        time.sleep(2)
         print(self.left, self.last_distance, self.delta, self.last_delta)
-        time.sleep(1)
         if self.left > self.last_distance or abs(self.delta) < abs(self.last_delta):
             action.correct()
         self.last_distance = self.left
