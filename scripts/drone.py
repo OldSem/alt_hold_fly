@@ -5,7 +5,7 @@ import geopy.distance
 
 class Action:
     delta = 0
-    delta_grad = 10
+    delta_grad = 50
 
     def __init__(self, channel, value=1500):
         self.channel = channel
