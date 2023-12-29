@@ -55,6 +55,7 @@ class Drone:
         return {action.channel: action.value for action in [self.roll, self.pitch, self.throttle, self.yaw]}
 
     def push_channels(self):
+        print('push ', self.channels)
         self.vehicle.channels.overrides = self.channels
 
     def set_direction(self, action):
