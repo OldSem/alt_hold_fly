@@ -15,10 +15,10 @@ class Action:
         self.value += self.delta * 2
 
     def faster(self):
-        self.value += self.value
+        self.value += self.delta
 
     def slower(self):
-        self.value -= self.value
+        self.value -= self.delta
 
 
 class Drone:
