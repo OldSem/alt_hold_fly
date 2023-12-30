@@ -113,15 +113,15 @@ class Drone:
         if abs(stop - start) in range(0, 1):
             movement.delta = 0
         elif stop - start > 0:
-            movement.delta = 50
+            movement.delta = 100
         else:
-            movement.delta = -50
+            movement.delta = -100
 
     def correct_direction(self):
         movements = {
             self.roll: {'value': 'lon', 'factor': 1000},
             self.pitch: {'value': 'lat', 'factor': 1000},
-            self.throttle: {'value': 'alt'},
+            self.throttle: {'value': 'alt', 'factor': -1},
         }
         for movement, value in movements.items():
             self.correct_movement(movement,
