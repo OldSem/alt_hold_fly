@@ -121,7 +121,7 @@ class Drone:
         movements = {
             self.roll: {'value': 'lon', 'factor': 1000},
             self.pitch: {'value': 'lat', 'factor': 1000},
-            self.throttle: {'value': 'alt', 'factor': -1},
+            self.throttle: {'value': 'alt'},
         }
         for movement, value in movements.items():
             self.correct_movement(movement,
