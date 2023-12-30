@@ -117,10 +117,10 @@ class Drone:
     def correct_movement(movement, start, stop, value=1):
         values = {100: 1,
                   10: 3,
-                  1: 10,
+                  1: 6,
                   0: 100}
         difference = stop - start
-        value = int(value / values.get(max([i for i in values if abs(difference) > i])))
+        value = int(value / values.get(max([i for i in values if abs(difference) >= i])))
         print(difference, value, stop, start)
         if 0 < abs(difference) < 1:
             movement.delta = 0
@@ -131,14 +131,14 @@ class Drone:
 
     def correct_yaw(self, yaw):
         self.correct_movement(self.yaw,
-                              self.attitude.yaw,
-                              yaw,
+                              self.attitude.yaw * 10,
+                              yaw * 10,
                               100)
 
     def correct_direction(self):
         movements = {
-            self.roll: {'movement': 'lon', 'factor': 100000, 'delta': 200},
-            self.pitch: {'movement': 'lat', 'factor': 100000, 'delta': -200},
+            self.roll: {'movement': 'lon', 'factor': 100000, 'delta': 300},
+            self.pitch: {'movement': 'lat', 'factor': 100000, 'delta': -300},
             self.throttle: {'movement': 'alt', 'delta': 500},
         }
         for movement, value in movements.items():
