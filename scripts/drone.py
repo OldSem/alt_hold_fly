@@ -127,13 +127,13 @@ class Drone:
             movement.delta = value
         else:
             movement.delta = -value
-        print(difference, movement.delta)
+        print(difference, movement.delta, start, stop)
 
     def correct_yaw(self, yaw):
         self.correct_movement(self.yaw,
                               self.attitude.yaw * 10,
                               yaw * 10,
-                              50)
+                              20)
 
     def correct_direction(self):
         movements = {
