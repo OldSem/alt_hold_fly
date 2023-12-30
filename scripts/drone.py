@@ -120,7 +120,7 @@ class Drone:
                   1: 100,
                   0: 100}
         difference = stop - start
-        value = value / values.get(max([i for i in values if abs(difference) > i]))
+        value = int(value / values.get(max([i for i in values if abs(difference) > i])))
         print(difference, value, stop, start)
         if 0 < abs(difference) < 1:
             movement.delta = 0
