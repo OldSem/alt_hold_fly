@@ -63,15 +63,22 @@ class Drone:
         return {action.channel: action.value for action in [self.roll, self.pitch, self.throttle, self.yaw]}
 
     def push_channels(self):
-        print('push ', self.channels)
+        print('push ', self.channels, self.left, self.position)
         self.vehicle.channels.overrides = self.channels
+
+    def arming(self):
+        while not self.vehicle.armed:
+            print(" Waiting for arming...")
+            self.vehicle.armed = True
+            time.sleep(1)
 
     def set_direction(self, action):
         self.last_distance = self.left
         self.last_delta = self.delta
         action.faster()
-        self.push_channels()
-        time.sleep(1)
+        for i in range(5):
+            self.push_channels()
+            time.sleep(1)
         print(self.left, self.last_distance, self.delta, self.last_delta)
         if self.left > self.last_distance or self.delta < self.last_delta:
             action.correct()
@@ -101,3 +108,30 @@ class Drone:
                 self.push_channels()
                 break
 
+    def correct_movement(self, movement, start, stop):
+        if abs(start - stop) in range(0, 1):
+            movement.delta = 0
+        elif start - stop > 0:
+            movement.delta = 50
+        else:
+            movement.delta = -50
+
+    def correct_direction(self):
+        movements = {
+            self.roll: {'value': 'lon', 'factor': 1000},
+            self.pitch: {'value': 'lat', 'factor': 1000},
+            self.throttle: {'value': 'alt'},
+        }
+        for movement, value in movements.items():
+            self.correct_movement(movement,
+                                  getattr(self.position, value.get('value')) * value.get('factor', 1),
+                                  getattr(self.wpl, value.get('value')) * value.get('factor', 1))
+
+    def careful_goto(self, wpl):
+        self.arming()
+        self.vehicle.mode = VehicleMode("ALT_HOLD")
+        self.wpl = LocationGlobalRelative(*wpl)
+        if self.left > 0.2 > (self.position.alt - self.wpl.alt):
+            self.correct_direction()
+            self.push_channels()
+            time.sleep(1)
