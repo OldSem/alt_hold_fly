@@ -109,24 +109,25 @@ class Drone:
                 break
 
     @staticmethod
-    def correct_movement(movement, start, stop):
+    def correct_movement(movement, start, stop, value):
         if abs(stop - start) in range(0, 1):
             movement.delta = 0
         elif stop - start > 0:
-            movement.delta = 100
+            movement.delta = value
         else:
-            movement.delta = -100
+            movement.delta = -value
 
     def correct_direction(self):
         movements = {
-            self.roll: {'value': 'lon', 'factor': 1000},
-            self.pitch: {'value': 'lat', 'factor': 1000},
-            self.throttle: {'value': 'alt'},
+            self.roll: {'movement': 'lon', 'factor': 1000, 'delta': 100},
+            self.pitch: {'movement': 'lat', 'factor': 1000, 'delta': -100},
+            self.throttle: {'movement': 'alt', 'delta': 200},
         }
         for movement, value in movements.items():
             self.correct_movement(movement,
-                                  getattr(self.position, value.get('value')) * value.get('factor', 1),
-                                  getattr(self.wpl, value.get('value')) * value.get('factor', 1))
+                                  getattr(self.position, value.get('movement')) * value.get('factor', 1),
+                                  getattr(self.wpl, value.get('movement')) * value.get('factor', 1),
+                                  value.get('delta'))
 
     def careful_goto(self, wpl):
         self.arming()
@@ -136,4 +137,4 @@ class Drone:
         while self.left > 0.2 and (self.wpl.alt - self.position.alt) > 0.2:
             self.correct_direction()
             self.push_channels()
-            time.sleep(1)
+            time.sleep(0.5)
