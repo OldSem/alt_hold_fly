@@ -117,10 +117,11 @@ class Drone:
     def correct_movement(movement, start, stop, value=1):
         values = {100: 1,
                   10: 10,
-                  1: 100}
+                  1: 100,
+                  0: 100}
         difference = stop - start
-        value = value / values.get(max([i for i in values if difference > i]))
-        print(difference, value)
+        value = value / values.get(max([i for i in values if abs(difference) > i]))
+        print(difference, value, stop, start)
         if 0 < abs(difference) < 1:
             movement.delta = 0
         elif difference > 0:
