@@ -133,7 +133,7 @@ class Drone:
         self.correct_movement(self.yaw,
                               self.attitude.yaw * 10,
                               yaw * 10,
-                              20)
+                              25)
 
     def correct_direction(self):
         movements = {
