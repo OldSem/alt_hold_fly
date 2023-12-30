@@ -111,7 +111,7 @@ class Drone:
     @staticmethod
     def correct_movement(movement, start, stop, value):
         print(movement, ' ', stop-start)
-        if abs(stop - start) in range(0, 1):
+        if 0 < abs(stop - start) < 1:
             movement.delta = 0
         elif stop - start > 0:
             movement.delta = value
