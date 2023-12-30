@@ -108,6 +108,7 @@ class Drone:
                 self.push_channels()
                 break
 
+    @staticmethod
     def correct_movement(self, movement, start, stop):
         if abs(start - stop) in range(0, 1):
             movement.delta = 0
@@ -131,7 +132,8 @@ class Drone:
         self.arming()
         self.vehicle.mode = VehicleMode("ALT_HOLD")
         self.wpl = LocationGlobalRelative(*wpl)
-        while self.left > 0.2 and (self.position.alt - self.wpl.alt) > 0.2:
+
+        while self.left > 0.2 and (self.wpl.alt - self.position.alt) > 0.2:
             self.correct_direction()
             self.push_channels()
             time.sleep(1)
