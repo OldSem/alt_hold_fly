@@ -121,13 +121,13 @@ class Drone:
                   0: 12}
         difference = stop - start
         value = int(value / values.get(max([i for i in values if abs(difference) >= i])))
-        print(difference, value, stop, start)
-        if 0 < abs(difference) < 1:
+        if 0 < abs(difference) < 0.1:
             movement.delta = 0
         elif difference > 0:
             movement.delta = value
         else:
             movement.delta = -value
+        print(difference, movement.delta)
 
     def correct_yaw(self, yaw):
         self.correct_movement(self.yaw,
@@ -139,7 +139,7 @@ class Drone:
         movements = {
             self.roll: {'movement': 'lon', 'factor': 100000, 'delta': 300},
             self.pitch: {'movement': 'lat', 'factor': 100000, 'delta': -300},
-            self.throttle: {'movement': 'alt', 'factor': 10, 'delta': 500},
+            self.throttle: {'movement': 'alt', 'factor': 50, 'delta': 400},
         }
         for movement, value in movements.items():
             self.correct_movement(movement,
