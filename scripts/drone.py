@@ -118,7 +118,7 @@ class Drone:
         values = {100: 1,
                   10: 3,
                   1: 6,
-                  0: 10}
+                  0: 9}
         difference = stop - start
         value = int(value / values.get(max([i for i in values if abs(difference) >= i])))
         if 0 < abs(difference) < 0.1:
@@ -152,7 +152,7 @@ class Drone:
         self.vehicle.mode = VehicleMode("ALT_HOLD")
         self.wpl = LocationGlobalRelative(*wpl)
 
-        while self.left > 0.2 or (self.wpl.alt - self.position.alt) > 0.2:
+        while self.left > 0.5 or abs((self.wpl.alt - self.position.alt)) > 0.2:
             self.correct_direction()
             self.push_channels()
             time.sleep(0.5)
