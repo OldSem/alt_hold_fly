@@ -134,7 +134,7 @@ class Drone:
         self.vehicle.mode = VehicleMode("ALT_HOLD")
         self.wpl = LocationGlobalRelative(*wpl)
 
-        while self.left > 0.2 and (self.wpl.alt - self.position.alt) > 0.2:
+        while self.left > 0.2 or (self.wpl.alt - self.position.alt) > 0.2:
             self.correct_direction()
             self.push_channels()
             time.sleep(0.5)
