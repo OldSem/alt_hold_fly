@@ -115,10 +115,15 @@ class Drone:
 
     @staticmethod
     def correct_movement(movement, start, stop, value=1):
-        print(movement, ' ', stop-start)
-        if 0 < abs(stop - start) < 1:
+        values = {100: 1,
+                  10: 10,
+                  1: 100}
+        difference = stop - start
+        value = value / values.get(max([i for i in values if difference > i]))
+        print(difference, value)
+        if 0 < abs(difference) < 1:
             movement.delta = 0
-        elif stop - start > 0:
+        elif difference > 0:
             movement.delta = value
         else:
             movement.delta = -value
