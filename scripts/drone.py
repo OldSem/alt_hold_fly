@@ -38,6 +38,7 @@ class Drone:
     wpl: LocationGlobalRelative
     last_distance: float
     last_delta: float
+    need_yaw: float
 
     def __init__(self, connection_string='udp:127.0.0.1:14550'):
         try:
@@ -48,6 +49,10 @@ class Drone:
     @property
     def position(self):
         return self.vehicle.location.global_relative_frame
+
+    @property
+    def attitude(self):
+        return self.vehicle.attitude
 
     @property
     def left(self):
@@ -109,7 +114,7 @@ class Drone:
                 break
 
     @staticmethod
-    def correct_movement(movement, start, stop, value):
+    def correct_movement(movement, start, stop, value=1):
         print(movement, ' ', stop-start)
         if 0 < abs(stop - start) < 1:
             movement.delta = 0
@@ -118,10 +123,16 @@ class Drone:
         else:
             movement.delta = -value
 
+    def correct_yaw(self, yaw):
+        self.correct_movement(self.yaw,
+                              self.attitude.yaw,
+                              yaw,
+                              50)
+
     def correct_direction(self):
         movements = {
-            self.roll: {'movement': 'lon', 'factor': 1000, 'delta': 100},
-            self.pitch: {'movement': 'lat', 'factor': 1000, 'delta': -100},
+            self.roll: {'movement': 'lon', 'factor': 100000, 'delta': 200},
+            self.pitch: {'movement': 'lat', 'factor': 100000, 'delta': -200},
             self.throttle: {'movement': 'alt', 'delta': 200},
         }
         for movement, value in movements.items():
@@ -130,12 +141,17 @@ class Drone:
                                   getattr(self.wpl, value.get('movement')) * value.get('factor', 1),
                                   value.get('delta'))
 
-    def careful_goto(self, wpl):
+    def careful_goto(self, wpl, yaw=0):
         self.arming()
         self.vehicle.mode = VehicleMode("ALT_HOLD")
         self.wpl = LocationGlobalRelative(*wpl)
 
         while self.left > 0.2 or (self.wpl.alt - self.position.alt) > 0.2:
             self.correct_direction()
+            self.push_channels()
+            time.sleep(0.5)
+
+        while yaw - self.attitude.yaw > 1:
+            self.correct_yaw(yaw)
             self.push_channels()
             time.sleep(0.5)
