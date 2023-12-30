@@ -118,7 +118,7 @@ class Drone:
         values = {100: 1,
                   10: 3,
                   1: 6,
-                  0: 100}
+                  0: 12}
         difference = stop - start
         value = int(value / values.get(max([i for i in values if abs(difference) >= i])))
         print(difference, value, stop, start)
