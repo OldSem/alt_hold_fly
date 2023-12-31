@@ -1,6 +1,15 @@
 from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative
 import time
 import geopy.distance
+import math
+
+
+def radians(degrees):
+    return math.radians(degrees if degrees < 180 else degrees - 360)
+
+
+def degrees(radians):
+    return math.degrees(radians if radians > 0 else 2 * math.pi + radians)
 
 
 class Action:
@@ -17,15 +26,15 @@ class Action:
 
     def correct(self):
         print("correct ", self.delta)
-        self.delta = int(-(self.delta/abs(self.delta) * self.delta_grad)) if self.delta != 0 else 0
+        self.delta = int(-(self.delta / abs(self.delta) * self.delta_grad)) if self.delta != 0 else 0
         print("corrected ", self.delta)
 
     def faster(self):
-        self.delta = int(self.delta/abs(self.delta) * (abs(self.delta + self.delta_grad))
+        self.delta = int(self.delta / abs(self.delta) * (abs(self.delta + self.delta_grad))
                          ) if self.delta != 0 else self.delta_grad
 
     def slower(self):
-        self.delta = int(self.delta/abs(self.delta) * (abs(self.delta - self.delta_grad))
+        self.delta = int(self.delta / abs(self.delta) * (abs(self.delta - self.delta_grad))
                          ) if self.delta != 0 else -self.delta_grad
 
 
@@ -68,7 +77,7 @@ class Drone:
         return {action.channel: action.value for action in [self.roll, self.pitch, self.throttle, self.yaw]}
 
     def push_channels(self):
-        print('push ', self.channels, self.left, self.position, self.attitude.yaw)
+        print('push ', self.channels, self.left, self.position, degrees(self.attitude.yaw))
         self.vehicle.channels.overrides = self.channels
 
     def arming(self):
@@ -134,12 +143,10 @@ class Drone:
         while True:
             self.yaw.delta = -25
             self.push_channels()
-            time.sleep(0.5)
+            time.sleep(0.1)
             self.yaw.delta = 0
             time.sleep(1)
             self.push_channels()
-
-
 
     def correct_direction(self):
         movements = {
@@ -163,7 +170,5 @@ class Drone:
         while self.left > 0.5 or abs((self.wpl.alt - self.position.alt)) > 0.2:
             self.correct_direction()
 
-
         while yaw - self.attitude.yaw > 1:
-            self.correct_yaw(yaw)
-
+            self.correct_yaw(radians(yaw))
