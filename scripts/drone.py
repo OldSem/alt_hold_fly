@@ -145,8 +145,9 @@ class Drone:
             self.push_channels()
             time.sleep(0.1)
             self.yaw.delta = 0
-            time.sleep(1)
             self.push_channels()
+            time.sleep(1)
+
 
     def correct_direction(self):
         movements = {
