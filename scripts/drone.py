@@ -80,6 +80,11 @@ class Drone:
         print('push ', self.channels, self.left, self.position, degrees(self.attitude.yaw))
         self.vehicle.channels.overrides = self.channels
 
+    def stabilize(self):
+        for movement in [self.roll, self.pitch, self.throttle, self.yaw]:
+            movement.delta = 0
+        self.push_channels()
+
     def arming(self):
         while not self.vehicle.armed:
             print(" Waiting for arming...")
@@ -139,14 +144,13 @@ class Drone:
         print(difference, movement.delta, start, stop)
 
     def correct_yaw(self, yaw):
-        # self.correct_movement(self.yaw, self.attitude.yaw * 10, yaw * 10,  25)
-        while True:
-            self.yaw.delta = -25
-            self.push_channels()
-            time.sleep(0.1)
-            self.yaw.delta = 0
-            self.push_channels()
-            time.sleep(1)
+        # self.correct_movement(self.yaw, self.attitude.yaw * 10, yaw * 10,  25
+        self.yaw.delta = 25 if yaw > 0 else -25
+        self.push_channels()
+        time.sleep(0.2)
+        self.yaw.delta = 0
+        self.push_channels()
+        time.sleep(1)
 
 
     def correct_direction(self):
@@ -170,6 +174,7 @@ class Drone:
 
         while self.left > 0.5 or abs((self.wpl.alt - self.position.alt)) > 0.2:
             self.correct_direction()
+        self.stabilize()
 
-        while yaw - self.attitude.yaw > 1:
+        while abs(yaw - degrees(self.attitude.yaw)) > 1:
             self.correct_yaw(radians(yaw))
