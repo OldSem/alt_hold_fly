@@ -178,3 +178,4 @@ class Drone:
 
         while abs(yaw - degrees(self.attitude.yaw)) > 1:
             self.correct_yaw(radians(yaw))
+        self.stabilize()
