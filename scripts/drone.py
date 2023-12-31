@@ -130,10 +130,16 @@ class Drone:
         print(difference, movement.delta, start, stop)
 
     def correct_yaw(self, yaw):
-        self.correct_movement(self.yaw,
-                              self.attitude.yaw * 10,
-                              yaw * 10,
-                              25)
+        # self.correct_movement(self.yaw, self.attitude.yaw * 10, yaw * 10,  25)
+        while True:
+            self.yaw.delta = -25
+            self.push_channels()
+            time.sleep(0.5)
+            self.yaw.delta = 0
+            time.sleep(1)
+            self.push_channels()
+
+
 
     def correct_direction(self):
         movements = {
@@ -146,6 +152,8 @@ class Drone:
                                   getattr(self.position, value.get('movement')) * value.get('factor', 1),
                                   getattr(self.wpl, value.get('movement')) * value.get('factor', 1),
                                   value.get('delta'))
+        self.push_channels()
+        time.sleep(0.5)
 
     def careful_goto(self, wpl, yaw=0):
         self.arming()
@@ -154,10 +162,8 @@ class Drone:
 
         while self.left > 0.5 or abs((self.wpl.alt - self.position.alt)) > 0.2:
             self.correct_direction()
-            self.push_channels()
-            time.sleep(0.5)
+
 
         while yaw - self.attitude.yaw > 1:
             self.correct_yaw(yaw)
-            self.push_channels()
-            time.sleep(0.5)
+
